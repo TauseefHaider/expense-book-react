@@ -20,7 +20,7 @@ function Profile() {
   //checking authentication if user is not active redirecting to signin page
   useEffect(() => {
     if (!activeuser) {
-      navigate("/login");
+      navigate("login");
     }
   }, [activeuser, navigate]);
 

@@ -10,14 +10,16 @@ function Categories() {
   const [category, setCategory] = useState("Income");
   const [expenseCat, setExpenseCat] = useState(false);
   const [incomeCat, setIncomeCat] = useState(true);
+  const [subCat, setSubCat] = useState("");
 
   useEffect(() => {
     if (category == "Income") {
       setExpenseCat(false);
       setIncomeCat(true);
+      setSubCat("");
     } else {
       setIncomeCat(false);
-
+      setSubCat("");
       setExpenseCat(true);
     }
   }, [category, setCategory]);
@@ -31,10 +33,12 @@ function Categories() {
     activeUserData = user;
   });
 
+  const [tableData, setTableData] = useState(activeUserData.transData);
+
   //checking authentication if user is not active redirecting to signin page
   useEffect(() => {
     if (!activeuser) {
-      navigate("/login");
+      navigate("login");
     }
   }, [activeuser, navigate]);
 
@@ -47,25 +51,28 @@ function Categories() {
           <div className="mt-20 flex flex-col gap-6">
             <select
               id="options"
+              value={category}
               onChange={(e) => setCategory(e.target.value)}
               name="selectValue"
               className="bg-gray-100 border-2 border-gray-300 md:w-[400px] w-[200px] rounded-md text-black p-2.5 focus:border-2 focus:border-black text-center"
             >
               <option>Income</option>
-              <option>Expenses</option>
+              <option>Expense</option>
             </select>
             {incomeCat ? (
               <div id="divOption1">
                 <select
                   id="selectValue-income"
                   name="selectValue"
+                  value={subCat}
+                  onChange={(e) => setSubCat(e.target.value)}
                   className="border-2 border-gray-300 rounded-md md:w-[400px] text-black w-[200px] p-2.5 focus:border-2 focus:border-black text-center"
                 >
+                  <option></option>
+                  <option>Not Categorized</option>
                   <option>Salary</option>
                   <option>Bonus</option>
                   <option>Commission</option>
-                  <option>Gift</option>
-                  <option>Others</option>
                 </select>
               </div>
             ) : null}
@@ -74,13 +81,15 @@ function Categories() {
                 <select
                   id="selectValue-expense"
                   name="selectValue"
+                  value={subCat}
+                  onChange={(e) => setSubCat(e.target.value)}
                   className="bg-gray-100 border-2 border-gray-300 md:w-[400px] w-[200px] rounded-md text-black p-2.5 focus:border-2 focus:border-black text-center"
                 >
+                  <option></option>
+                  <option>Not Categorized</option>
                   <option>Shopping</option>
                   <option>Utility</option>
                   <option>Food</option>
-                  <option>Petrol</option>
-                  <option>Others</option>
                 </select>
               </div>
             ) : null}
@@ -99,7 +108,23 @@ function Categories() {
                   <th className="border p-1">Note</th>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody>
+                {tableData.map((user, index) => {
+                  if (user.type == category) {
+                    if (user.cat == subCat) {
+                      return (
+                        <tr key={index}>
+                          <td>{user.type}</td>
+                          <td>{user.money}</td>
+                          <td>{user.cat}</td>
+                          <td>{user.date}</td>
+                          <td>{user.note}</td>
+                        </tr>
+                      );
+                    }
+                  }
+                })}
+              </tbody>
             </table>
           </div>
         </div>

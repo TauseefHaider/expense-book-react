@@ -7,6 +7,8 @@ function Setting() {
   let activeuser = localStorage.getItem("activeUser");
   let activeUserData;
   const navigate = useNavigate();
+  const [expenseCat, setExpenseCat] = useState();
+  const [incomeCat, setIncomeCat] = useState();
 
   if (userdata) {
     users = JSON.parse(userdata);
@@ -20,12 +22,63 @@ function Setting() {
   //checking authentication if user is not active redirecting to signin page
   useEffect(() => {
     if (!activeuser) {
-      navigate("/login");
+      navigate("login");
     }
   }, [activeuser, navigate]);
 
-  useEffect(() => {});
+  const [tableDataIn, setTableDataIn] = useState(activeUserData.Income);
+  const [tableDataEx, setTableDataEx] = useState(activeUserData.Expense);
 
+  const updateStorage = () => {
+    const userData = {
+      incomeCat,
+    };
+    const updatedUsers = users.map((user) => {
+      if (incomeCat === "") {
+        alert("Fileds are required");
+      } else {
+        setTableDataIn((prevStudents) => [...prevStudents, userData]);
+        resetfields();
+      }
+      if (user.Email === activeuser) {
+        const updatedUser = {
+          ...user,
+          Income: [...user.Income, userData], // Append new transaction to existing transactions
+        };
+        return updatedUser;
+      }
+      return user;
+    });
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+  };
+  const updateStorageEx = () => {
+    const userData = {
+      expenseCat,
+    };
+    const updatedUsers = users.map((user) => {
+      if (expenseCat === "") {
+        alert("Fileds are required");
+      } else {
+        setTableDataEx((prevStudents) => [...prevStudents, userData]);
+        resetfieldsex();
+      }
+      if (user.Email === activeuser) {
+        const updatedUser = {
+          ...user,
+          Expense: [...user.Expense, userData], // Append new transaction to existing transactions
+        };
+        return updatedUser;
+      }
+      return user;
+    });
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+  };
+  const resetfields = () => {
+    setIncomeCat("");
+  };
+  const resetfieldsex = () => {
+    setExpenseCat("");
+  };
   return (
     <>
       <section className="bg-[#404040] flex flex-col items-center w-full">
@@ -35,13 +88,16 @@ function Setting() {
               <input
                 type="text"
                 id="income-category"
+                value={incomeCat}
+                onChange={(e) => setIncomeCat(e.target.value)}
                 className="bg-gray-100 border-2 border-gray-300 rounded-md w-[200px] text-black p-2.5 focus:border-2 focus:border-black text-center"
-                placeholder=""
+                placeholder="Add Income category"
                 required
               />
             </div>
             <button
               id="add-income-category"
+              onClick={updateStorage}
               className="border p-2 rounded-md w-[120px] self-center mt-6 bg-[#51d289] hover:bg-[#1f9e56] hover:text-slate-100"
             >
               Add
@@ -53,6 +109,13 @@ function Setting() {
               >
                 <th>Income Categories</th>
                 <tbody>
+                  {tableDataIn.map((user, index) => {
+                    return (
+                      <tr key={index}>
+                        <td>{user.incomeCat}</td>
+                      </tr>
+                    );
+                  })}
                   <tr>
                     <td>Salary</td>
                   </tr>
@@ -77,13 +140,16 @@ function Setting() {
               <input
                 type="text"
                 id="expense-category"
+                value={expenseCat}
+                onChange={(e) => setExpenseCat(e.target.value)}
                 className="bg-gray-100 border-2 border-gray-300 rounded-md w-[200px] text-black p-2.5 focus:border-2 focus:border-black text-center"
-                placeholder=""
+                placeholder="Add Expense category"
                 required
               />
             </div>
             <button
               id="add-expense-category"
+              onClick={updateStorageEx}
               className="border p-2 rounded-md w-[120px] self-center mt-6 bg-[#51d289] hover:bg-[#1f9e56] hover:text-slate-100"
             >
               Add
@@ -96,6 +162,13 @@ function Setting() {
                 <th>Expense Categories</th>
 
                 <tbody>
+                  {tableDataEx.map((user, index) => {
+                    return (
+                      <tr key={index}>
+                        <td>{user.expenseCat}</td>
+                      </tr>
+                    );
+                  })}
                   <tr>
                     <td>Shopping</td>
                   </tr>

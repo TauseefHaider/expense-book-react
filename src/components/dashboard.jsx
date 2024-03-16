@@ -26,11 +26,33 @@ function Home() {
   //checking authentication if user is not active redirecting to signin page
   useEffect(() => {
     if (!activeuser) {
-      navigate("/login");
+      navigate("login");
     }
   }, [activeuser, navigate]);
 
   const [tableData, setTableData] = useState(activeUserData.transData);
+
+  const updateStorageIn = () => {
+    const userData = {
+      money,
+      cat,
+      date,
+      note,
+      type: "Income",
+      delete: "Delete",
+    };
+    const updatedUsers = users.map((user) => {
+      if (user.Email === activeuser) {
+        const updatedUser = {
+          ...user,
+          transData: [...user.transData, userData], // Append new transaction to existing transactions
+        };
+        return updatedUser;
+      }
+      return user;
+    });
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+  };
 
   const handleSaveIncome = () => {
     const userData = {
@@ -47,27 +69,36 @@ function Home() {
     } else {
       setTableData((prevStudents) => [...prevStudents, userData]);
       resetfields();
-
-      const updateStorage = () => {
-        const updatedUsers = users.map((user) => {
-          if (user.Email === activeuser) {
-            const updatedUser = {
-              ...user,
-              transData: [...user.transData, userData], // Append new transaction to existing transactions
-            };
-            return updatedUser;
-          }
-          return user;
-        });
-        localStorage.setItem("users", JSON.stringify(updatedUsers));
-      };
+      updateStorageIn();
     }
   };
 
   const resetfields = () => {
     setNote("");
     setMoney("");
-    setCat("Salary");
+    setCat("Not Categorized");
+    setDate(new Date().toISOString().split("T")[0]);
+  };
+  const updateStorageEx = () => {
+    const userData = {
+      money,
+      cat,
+      date,
+      note,
+      type: "Expense",
+      delete: "Delete",
+    };
+    const updatedUsers = users.map((user) => {
+      if (user.Email === activeuser) {
+        const updatedUser = {
+          ...user,
+          transData: [...user.transData, userData], // Append new transaction to existing transactions
+        };
+        return updatedUser;
+      }
+      return user;
+    });
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
   };
 
   const handleSaveExpense = () => {
@@ -85,19 +116,8 @@ function Home() {
     } else {
       setTableData((prevStudents) => [...prevStudents, userData]);
       resetfields();
-      const updateStorage = () => {
-        const updatedUsers = users.map((user) => {
-          if (user.Email === activeuser) {
-            const updatedUser = {
-              ...user,
-              transData: [...user.transData, userData], // Append new transaction to existing transactions
-            };
-            return updatedUser;
-          }
-          return user;
-        });
-        localStorage.setItem("users", JSON.stringify(updatedUsers));
-      };
+
+      updateStorageEx();
     }
   };
 
@@ -105,44 +125,6 @@ function Home() {
     <>
       <section className="bg-[#404040] flex flex-col  items-center w-full gap-10">
         <div className="bg-[#404040] w-full md:w-[calc(100%-200px)] lg:flex grid pt-10 justify-center gap-20">
-          {/* <!-- Percentage Circle --> */}
-          {/* <div
-            class="bg-white rounded-md h-[500px] w-[300px] md:w-[350px] lg:w-[350px] md:p-[30px] gap-7 text-black flex flex-col justify-center items-center"
-          >
-            <div
-              id="progress-circle"
-              class="md:h-[250px] md:w-[250px] h-[180px] w-[180px] rounded-full flex items-center justify-center"
-              style="background: conic-gradient(#51d289 3.5deg, #ededed 0deg)"
-            >
-              <div
-                class="h-[150px] w-[150px] md:h-[210px] md:w-[210px] bg-white rounded-full flex flex-col items-center justify-center"
-              >
-                <div>
-                  <span
-                    id="progress-percent"
-                    class="text-2xl font-bold text-[#51d289]"
-                    >0</span
-                  ><span class="text-2xl font-bold text-[#51d289]">%</span>
-                </div>
-                <span class="text-xl text-[#51d289]">Spent</span>
-              </div>
-            </div>
-
-            <div class="flex gap-10">
-              <div
-                class="flex flex-col items-center bg-[#2b2b2b] text-slate-100 p-1 px-2 rounded-md"
-              >
-                <p>Available</p>
-                <p class="text-[#51d289]">00</p>
-              </div>
-              <div
-                class="flex flex-col items-center bg-[#2b2b2b] text-slate-100 p-1 px-5 rounded-md"
-              >
-                <p>Spent</p>
-                <p class="text-[#ffe600]">00</p>
-              </div>
-            </div>
-          </div>  */}
           {/* <!-- Input --> */}
           <div className="bg-white rounded-md h-[500px] w-[300px] md:w-[350px] lg:w-[350px] md:p-[30px] gap-7 text-black flex flex-col">
             <div className="flex flex-col items-center">

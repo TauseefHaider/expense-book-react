@@ -1,6 +1,13 @@
 import { NavLink } from "react-router-dom";
 
 function Sidebar() {
+  let activeuser = localStorage.getItem("activeUser");
+
+  const logOut = () => {
+    localStorage.removeItem("activeuser");
+    location.replace("login");
+  };
+
   return (
     <>
       <aside className="md:flex md:flex-col h-[calc(100vh-110px)] pl-5 justify-between hidden bg-[#2b2b2b] w-[200px] text-slate-100 text-base font-bold py-10 gap-8 fixed top-[110px]">
@@ -55,7 +62,10 @@ function Sidebar() {
             <span>Profile</span>
           </NavLink>
 
-          <div className="flex gap-3 items-center cursor-pointer hover:text-[#51d289] hover:bg-[#404040] p-2 rounded-md mr-1">
+          <div
+            onClick={logOut}
+            className="flex gap-3 items-center cursor-pointer hover:text-[#51d289] hover:bg-[#404040] p-2 rounded-md mr-1"
+          >
             <span className="material-symbols-outlined"> logout </span>
             <span>Logout</span>
           </div>

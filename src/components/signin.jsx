@@ -22,8 +22,8 @@ function Singin() {
   }
 
   const handleRegister = () => {
-    let Income = ["Not Categorized", "Salary", "Bonus", "Commission"];
-    let Expense = ["Not Categorized", "Shopping", "Utility", "Food"];
+    let Income = [];
+    let Expense = [];
     let transData = [];
     if (Name === "" || Email === "" || Pass === "" || confPass === "") {
       alert("Please fill all fields");
